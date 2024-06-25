@@ -2,20 +2,22 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\ClassesResource\Pages;
-use App\Filament\Resources\ClassesResource\RelationManagers;
-use App\Models\Classes;
 use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
 use Filament\Tables;
+use App\Models\Section;
+use Filament\Forms\Form;
 use Filament\Tables\Table;
+use Filament\Resources\Resource;
+use Filament\Forms\Components\Select;
 use Illuminate\Database\Eloquent\Builder;
+use App\Filament\Resources\SectionResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Resources\SectionResource\RelationManagers;
+use App\Models\Classes;
 
-class ClassesResource extends Resource
+class SectionResource extends Resource
 {
-    protected static ?string $model = Classes::class;
+    protected static ?string $model = Section::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
@@ -23,6 +25,12 @@ class ClassesResource extends Resource
     {
         return $form
             ->schema([
+                Select::make('class_id')
+                    // ->label('Class name')
+                    // ->options(
+                    //     Classes::pluck('name','id')
+                    // ), // method 1
+                 ->relationship(name:'class',titleAttribute:'name'), // method 2
                 Forms\Components\TextInput::make('name')
                     ->required()
                     ->maxLength(255),
@@ -35,6 +43,10 @@ class ClassesResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->searchable(),
+                Tables\Columns\TextColumn::make('class.name')
+                    ->numeric()
+                    ->sortable()
+                    ->badge(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -49,6 +61,7 @@ class ClassesResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make()
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -67,9 +80,9 @@ class ClassesResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListClasses::route('/'),
-            'create' => Pages\CreateClasses::route('/create'),
-            'edit' => Pages\EditClasses::route('/{record}/edit'),
+            'index' => Pages\ListSections::route('/'),
+            'create' => Pages\CreateSection::route('/create'),
+            'edit' => Pages\EditSection::route('/{record}/edit'),
         ];
     }
 }
