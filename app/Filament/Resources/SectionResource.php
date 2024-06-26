@@ -14,6 +14,7 @@ use App\Filament\Resources\SectionResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\SectionResource\RelationManagers;
 use App\Models\Classes;
+use Filament\Tables\Columns\TextColumn;
 
 class SectionResource extends Resource
 {
@@ -47,6 +48,8 @@ class SectionResource extends Resource
                     ->numeric()
                     ->sortable()
                     ->badge(),
+                TextColumn::make('students_count')
+                    ->counts('students'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
