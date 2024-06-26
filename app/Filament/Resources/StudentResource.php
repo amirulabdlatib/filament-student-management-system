@@ -6,6 +6,7 @@ use Filament\Forms;
 use Filament\Tables;
 use App\Models\Section;
 use App\Models\Student;
+use Filament\Forms\Get;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
@@ -34,11 +35,20 @@ class StudentResource extends Resource
                     ->required()
                     ->maxLength(255),
                 Select::make('class_id')
-                    ->relationship(name:'class',titleAttribute:'name'),
-                // Select::make('section_id')
-                //     ->options(
-                //         Section::pluck('name','id')
-                //     ),
+                    ->relationship(name:'class',titleAttribute:'name')
+                    ->live(),
+                Select::make('section_id')
+                     ->options(
+                        function(Get $get){
+                            $classId = $get('class_id');
+                            
+                            info($classId); // will output in laravel.log
+                            
+                            if($classId){
+                                return Section::where('class_id',$classId)->pluck('name','id');
+                            }
+                        }
+                     ),
                
             ]);
     }
