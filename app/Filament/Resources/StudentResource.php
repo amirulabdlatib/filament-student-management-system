@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use Filament\Forms;
 use Filament\Tables;
+use App\Models\Classes;
 use App\Models\Section;
 use App\Models\Student;
 use Filament\Forms\Get;
@@ -14,11 +15,13 @@ use Filament\Resources\Resource;
 use Maatwebsite\Excel\Facades\Excel;
 use Filament\Forms\Components\Select;
 use Filament\Tables\Actions\BulkAction;
+use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use App\Filament\Resources\StudentResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\StudentResource\RelationManagers;
+use Filament\Tables\Enums\FiltersLayout;
 
 class StudentResource extends Resource
 {
@@ -84,7 +87,21 @@ class StudentResource extends Resource
             ])
             ->filters([
                 //
-            ])
+                SelectFilter::make('class_id')
+                    ->label('Class')
+                    ->options(
+                        Classes::pluck('name','id')
+                    ),
+                SelectFilter::make('section_id')
+                    ->options(
+                        Section::distinct()
+                            ->orderBy('name')
+                            ->pluck('name','id')
+                            ->unique()
+                            ->toArray()                        
+                        )
+                    ,
+                    ],layout:FiltersLayout::AboveContent)
             ->actions([
                 Tables\Actions\EditAction::make(),
             ])
