@@ -20,6 +20,9 @@ class SectionResource extends Resource
 {
     protected static ?string $model = Section::class;
 
+    protected static ?string $navigationGroup = 'Academic Management';
+
+
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function form(Form $form): Form
@@ -87,5 +90,10 @@ class SectionResource extends Resource
             'create' => Pages\CreateSection::route('/create'),
             'edit' => Pages\EditSection::route('/{record}/edit'),
         ];
+    }
+
+    public static function getNavigationBadge(): ?string
+    {
+        return static::$model::count(); //method 2
     }
 }
