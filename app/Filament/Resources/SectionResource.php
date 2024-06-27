@@ -4,17 +4,19 @@ namespace App\Filament\Resources;
 
 use Filament\Forms;
 use Filament\Tables;
+use App\Models\Classes;
 use App\Models\Section;
+use Filament\Forms\Get;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Select;
+use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\SectionResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\SectionResource\RelationManagers;
-use App\Models\Classes;
-use Filament\Tables\Columns\TextColumn;
+use Illuminate\Validation\Rules\Unique;
 
 class SectionResource extends Resource
 {
@@ -37,6 +39,9 @@ class SectionResource extends Resource
                  ->relationship(name:'class',titleAttribute:'name'), // method 2
                 Forms\Components\TextInput::make('name')
                     ->required()
+                    ->unique(ignoreRecord:True,modifyRuleUsing:function(Get $get,Unique $rule){
+                        return $rule->where('class_id',$get('class_id'));
+                    })
                     ->maxLength(255),
             ]);
     }
